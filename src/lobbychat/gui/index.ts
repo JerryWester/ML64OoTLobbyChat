@@ -80,11 +80,41 @@ function announce(msg: string){
 
 let upload = document.getElementById('upload') as HTMLInputElement;
 
-upload.addEventListener('input', (evt) => {
-    let src: string = URL.createObjectURL(upload.files?.item(0));
+function uploadImage(file: File){
+    let src: string = URL.createObjectURL(file);
     handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${src}" onload="URL.revokeObjectURL(${src})" max-width="100%"></img>`)});
-    // URL.revokeObjectURL(src);
+}
+
+upload.addEventListener('input', () => {
+    if(upload.files !== null){
+        uploadImage(upload.files[0]);
+    }
 })
+
+document.addEventListener('paste', (evt) => {
+    if(evt.clipboardData !== null){
+        if(evt.clipboardData.files.length > 0){
+            if(/image\/.+/g.test(evt.clipboardData.files[0].type)){
+                uploadImage(evt.clipboardData.files[0]);
+            }
+        }
+    }
+});
+
+document.addEventListener('dragover', (evt) => {
+    evt.preventDefault();
+});
+
+document.addEventListener('drop', (evt) => {
+    evt.preventDefault();
+    if(evt.dataTransfer !== null){
+        if(evt.dataTransfer.files.length > 0){
+            if(/image\/.+/g.test(evt.dataTransfer.files[0].type)){
+                uploadImage(evt.dataTransfer.files[0]);
+            }
+        }
+    }
+});
 
 let text = document.getElementById('text') as HTMLTextAreaElement;
 text.value = '';
