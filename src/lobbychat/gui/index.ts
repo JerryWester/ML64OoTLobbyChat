@@ -5,6 +5,8 @@ import { ChatMessage, ChatStorage, LobbyChat_JoinEvent } from './chatclasses';
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+const stripHtml = require('./string-strip-html.umd.js');
+
 const hooks = {};
 // let storage: ChatStorage = new ChatStorage();
 let player: string = "";
@@ -83,7 +85,7 @@ text.addEventListener('keydown', (evt) => {
     if(evt.key === 'Enter' && !evt.shiftKey){
         evt.preventDefault();
         if(text.value !== ''){
-            handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, text.value)});
+            handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, stripHtml(text.value).result)});
             text.value = '';
         }
     }
