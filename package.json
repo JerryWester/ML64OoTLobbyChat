@@ -1,6 +1,6 @@
 {
   "name": "lobbychat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A chat window for players of OotOnline to use",
   "main": "index.js",
   "scripts": {
