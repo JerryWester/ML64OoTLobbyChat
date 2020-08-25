@@ -1,0 +1,11 @@
+node_modules/
+dist/
+cores/
+build/
+roms/
+.vscode/
+libs/
+win-ia32-unpacked/
+win-ia32-unpacked.pak
+modloader64-config.json
+modloader64-p2-config.json
