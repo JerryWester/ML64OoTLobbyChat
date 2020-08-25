@@ -1,12 +1,12 @@
 {
   "name": "lobbychat",
   "version": "1.0.0",
-  "description": "",
+  "description": "A chat window for players of OotOnline to use",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "JerryWester",
   "license": "ISC"
 }

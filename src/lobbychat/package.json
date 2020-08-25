@@ -1,13 +1,13 @@
 {
   "name": "lobbychat",
   "version": "1.0.0",
-  "description": "",
+  "description": "A chat window for players of OotOnline to use",
   "main": "lobbychat.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "core": "OcarinaofTime",
-  "author": "",
-  "license": "ISC"
+  "author": "JerryWester",
+  "license": "MIT"
 }
