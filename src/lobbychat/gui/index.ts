@@ -78,6 +78,14 @@ function announce(msg: string){
     message.scrollIntoView()
 }
 
+let upload = document.getElementById('upload') as HTMLInputElement;
+
+upload.addEventListener('input', (evt) => {
+    let src: string = URL.createObjectURL(upload.files?.item(0));
+    handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${src}" onload="URL.revokeObjectURL(${src})" max-width="100%"></img>`)});
+    // URL.revokeObjectURL(src);
+})
+
 let text = document.getElementById('text') as HTMLTextAreaElement;
 text.value = '';
 

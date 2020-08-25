@@ -68,7 +68,7 @@
 
             #text{
                 box-sizing: border-box;
-                width: 100%;
+                min-width: calc(100% - 65px);
                 height: 100%;
                 padding: 5px;
                 resize: none;
@@ -89,6 +89,18 @@
                 overflow-x: auto;
                 /* scrollbar-color: var(--scrollbar) var(--scrollbar-bg);
                 scrollbar-width: thin; */
+            }
+
+            #upload{
+                display: none;
+            }
+
+            #upload + label{
+                vertical-align: top;
+                /* text-align: center; */
+                display: inline-block;
+                height: 100%;
+                width: 60px
             }
             
             ::-webkit-scrollbar{
@@ -129,7 +141,17 @@
     <body>
         <div id="msgarea"></div>
         <div id="header"><h2>JerryWesterTest</h2></div>
-        <div id="footer"><textarea id="text" autofocus="true" placeholder="Enter your message here and press enter to send. Shift-Enter for newline."></textarea></div>
+        <div id="footer">
+            <input type="file" id="upload" accept="image/*">
+            <label for="upload">
+                <div style="display: table; width: 100%; height: 100%;">
+                    <div style="display: table-cell; vertical-align: middle; text-align: center;">
+                        Upload
+                    </div>
+                </div>
+            </label>
+            <textarea id="text" autofocus="true" placeholder="Enter your message here and press enter to send. Shift-Enter for newline."></textarea>
+        </div>
         <script>
             var hooks = require('./index.js');
         </script>
