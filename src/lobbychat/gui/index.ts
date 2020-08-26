@@ -8,7 +8,6 @@ const ipc = electron.ipcRenderer;
 const stripHtml = require('./string-strip-html.umd.js');
 
 const hooks = {};
-// let storage: ChatStorage = new ChatStorage();
 let player: string = "";
 
 class MapMessageHandlers {
@@ -22,15 +21,15 @@ class MapMessageHandlers {
     @TunnelMessageHandler("lobbychat:JoinUpdate")
     onJoined(evt: LobbyChat_JoinEvent){
         let header = document.getElementById('header') as HTMLDivElement;
-        header.innerHTML = `<h2>${evt.storage.lobby}</h2>`;
+        header.innerHTML = `<h2>${evt.lobby}</h2>`;
         player = evt.player.nickname;
         // announce('Retreiving Old Messages...');
-        ChatStorage.getMessages(evt.storage).forEach(addMessage);
+        evt.history.forEach(addMessage);
         // announce('Getting Lobby...');
-        announce(`You have joined lobby ${ChatStorage.getLobby(evt.storage)}!`);
+        announce(`You have joined lobby ${evt.lobby}!`);
         // announce('Getting Players...')
         let names: Array<string> = [];
-        ChatStorage.getPlayers(evt.storage).forEach((player) => {
+        evt.players.forEach((player) => {
             names.push(player.nickname);
         });
         announce(`There is currently ${names.length} players in the lobby: ${names.join(', ')}`);

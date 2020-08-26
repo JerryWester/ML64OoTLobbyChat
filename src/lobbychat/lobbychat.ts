@@ -27,83 +27,84 @@ class lobbychat implements IPlugin{
 
     @EventHandler(EventsClient.ON_LOBBY_JOIN)
     onLobbyJoinClient(evt: LobbyData){
-        ChatStorage.setLobby(this.storage, evt.name);
-        ChatStorage.addPlayer(this.storage, this.ModLoader.me);
-        this.ModLoader.clientSide.sendPacket(new LobbyChat_PingPacket(evt.name, this.ModLoader.me));
-    }
-
-    @NetworkHandler('LobbyChat_PingPacket')
-    onReceivePingPacket(packet: LobbyChat_PingPacket){
-        this.ModLoader.clientSide.sendPacketToSpecificPlayer(new LobbyChat_StoragePacket(packet.lobby, this.storage), packet.player);
-    }
-
-    @NetworkHandler('LobbyChat_StoragePacket')
-    onReceiveStoragePacket(packet: LobbyChat_StoragePacket){
-        this.storage = packet.storage;
-        // ChatStorage.addPlayer(this.storage, this.ModLoader.me);
-        this.ModLoader.clientSide.sendPacket(new LobbyChat_AddPlayerPacket(packet.lobby, this.ModLoader.me));
+        this.storage.setLobby(evt.name);
+        this.storage.addPlayer(this.ModLoader.me);
     }
 
     @EventHandler(EventsClient.ON_PLAYER_JOIN)
     onPlayerJoin(packet: INetworkPlayer){
         try {
-            let addPlayer: boolean = true;
-            ChatStorage.getPlayers(this.storage).forEach((player: INetworkPlayer) => {
-                if(packet.nickname === player.nickname){
-                    addPlayer = false;
-                }
-            });
-            if(addPlayer){
-                ChatStorage.addPlayer(this.storage, packet);
-                try {this.ModLoader.gui.tunnel.send('lobbychat:AddPlayer', packet.nickname);} catch(err) {}
+            this.storage.addPlayer(packet);
+            try {
+                this.ModLoader.gui.tunnel.send('lobbychat:AddPlayer', packet.nickname);
+            } catch(err) {
+                this.ModLoader.logger.error(err);
             }
-        } catch(err) {}
+        } catch(err) {
+            this.ModLoader.logger.error(err);
+        }
     }
-
-    // @NetworkHandler('LobbyChat_AddPlayerPacket')
-    // onReceiveAddPlayerPacket(packet: LobbyChat_AddPlayerPacket){
-    //     this.storage.addPlayer(packet.player);
-    //     this.ModLoader.gui.tunnel.send('lobbychat:AddPlayer', packet.player.nickname);
-    // }
 
     @EventHandler(EventsClient.ON_PLAYER_LEAVE)
     onPlayerLeave(packet: INetworkPlayer){
-        ChatStorage.getPlayers(this.storage).forEach((player: INetworkPlayer) => {
-            if(packet.nickname === player.nickname){
-                ChatStorage.removePlayer(this.storage, packet);
-                try {this.ModLoader.gui.tunnel.send('lobbychat:RmPlayer', packet.nickname);} catch(err) {}
+        try {
+            this.storage.removePlayer(packet);
+            try {
+                this.ModLoader.gui.tunnel.send('lobbychat:RmPlayer', packet.nickname);
+            } catch(err) {
+                this.ModLoader.logger.error(err);
             }
-        });
+        } catch(err) {
+            this.ModLoader.logger.error(err);
+        }
     }
-
-    // @NetworkHandler('LobbyChat_RmPlayerPacket')
-    // onReceiveRmPlayerPacket(packet: LobbyChat_RmPlayerPacket){
-    //     this.storage.removePlayer(packet.player);
-    //     this.ModLoader.gui.tunnel.send('lobbychat:RmPlayer', packet.player.nickname);
-    // }
 
     @NetworkHandler('LobbyChat_AddMessagePacket')
     onReceiveAddMessagePacket(packet: LobbyChat_AddMessagePacket){
-        ChatStorage.addMessage(this.storage, packet.message);
-        try {this.ModLoader.gui.tunnel.send('lobbychat:AddMsg', packet.message);} catch(err) {}
+        try {
+            this.storage.addMessage(packet.message);
+            try {
+                this.ModLoader.gui.tunnel.send('lobbychat:AddMsg', packet.message);
+            } catch(err) {
+                this.ModLoader.logger.error(err);
+            }
+        } catch(err) {
+            this.ModLoader.logger.error(err);
+        }
     }
 
     @NetworkHandler('LobbyChat_RmMessagePacket')
     onReceiveRmMessagePacket(packet: LobbyChat_RmMessagePacket){
-        ChatStorage.removeMessage(this.storage, packet.message);
-        try {this.ModLoader.gui.tunnel.send('lobbychat:RmMsg', packet.message);} catch(err) {}
+        try {
+            this.storage.removeMessage(packet.message);
+            try {
+                this.ModLoader.gui.tunnel.send('lobbychat:RmMessage', packet.message);
+            } catch(err) {
+                this.ModLoader.logger.error(err);
+            }
+        } catch(err) {
+            this.ModLoader.logger.error(err);
+        }
     }
 
     @TunnelMessageHandler('lobbychat:GUIReady')
     onGUIReady(){
-        this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage));
+        this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
     }
 
     @TunnelMessageHandler('lobbychat:SendMessage')
     onSendMessage(evt: any){
-        ChatStorage.addMessage(this.storage, evt.value);
-        this.ModLoader.clientSide.sendPacket(new LobbyChat_AddMessagePacket(ChatStorage.getLobby(this.storage), evt.value));
-        this.ModLoader.gui.tunnel.send('lobbychat:AddMsg', evt.value);
+        try {
+            this.storage.addMessage(evt.value);
+            this.ModLoader.clientSide.sendPacket(new LobbyChat_AddMessagePacket(this.storage.getLobby(), evt.value));
+            try {
+                this.ModLoader.gui.tunnel.send('lobbychat:AddMsg', evt.value);
+            } catch(err) {
+                this.ModLoader.logger.error(err);
+            }
+        } catch(err) {
+            this.ModLoader.logger.error(err);
+        }
     }
 }
 

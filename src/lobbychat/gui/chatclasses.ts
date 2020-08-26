@@ -9,37 +9,16 @@ export enum ChatEvents{
     RM_PLAYER = "lobbychat_rmplayer",
 }
 
-// export class Player{
-//     name: string;
-//     room: number;
-//     constructor(name: string, room: number){
-//         this.name = name;
-//         this.room = room;
-//     }
-
-//     getName(){
-//         return this.name;
-//     }
-
-//     getRoomNum(){
-//         return this.room;
-//     }
-
-//     setName(name: string){
-//         this.name = name;
-//     }
-
-//     setRoomNum(room: number){
-//         this.room = room;
-//     }
-// }
-
 export class LobbyChat_JoinEvent{
     player: INetworkPlayer;
-    storage: ChatStorage;
-    constructor(player: INetworkPlayer, storage: ChatStorage){
+    lobby: string;
+    players: Array<INetworkPlayer>;
+    history: Array<ChatMessage>;
+    constructor(player: INetworkPlayer, lobby: string, players: Array<INetworkPlayer>, history: Array<ChatMessage>){
         this.player = player;
-        this.storage = storage;
+        this.lobby = lobby;
+        this.players = players;
+        this.history = history;
     }
 }
 
