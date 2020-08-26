@@ -24,7 +24,9 @@ class MapMessageHandlers {
         header.innerHTML = `<h2>${evt.lobby}</h2>`;
         player = evt.player.nickname;
         // announce('Retreiving Old Messages...');
-        evt.history.forEach(addMessage);
+        evt.history.forEach((message) => {
+            addMessage(message);
+        });
         // announce('Getting Lobby...');
         announce(`You have joined lobby ${evt.lobby}!`);
         // announce('Getting Players...')

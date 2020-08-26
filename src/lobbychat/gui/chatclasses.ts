@@ -29,11 +29,11 @@ export class LobbyChat_PingPacket extends Packet{
     }
 }
 
-export class LobbyChat_StoragePacket extends Packet{
-    storage: ChatStorage;
-    constructor(lobby: string, storage: ChatStorage) {
-        super('LobbyChat_StoragePacket', 'LobbyChat', lobby, false);
-        this.storage = storage;
+export class LobbyChat_HistoryPacket extends Packet{
+    history: Array<ChatMessage>;
+    constructor(lobby: string, history: Array<ChatMessage>) {
+        super('LobbyChat_HistoryPacket', 'LobbyChat', lobby, false);
+        this.history = history;
     }
 }
 
@@ -183,5 +183,13 @@ export class ChatStorage{
 
     getMessages(){
         return ChatStorage.getMessages(this);
+    }
+
+    static setMessages(object: ChatStorage, history: Array<ChatMessage>){
+        object.history = JSON.parse(JSON.stringify(history)) as Array<ChatMessage>;
+    }
+
+    setMessages(history: Array<ChatMessage>){
+        ChatStorage.setMessages(this, history);
     }
 }
