@@ -101,11 +101,9 @@ export class LobbyChat_RmMessagePacket extends Packet{
 export class ChatMessage{
     sender: string;
     message: string;
-    timestamp: Date;
     constructor(sender: string, message: string){
         this.sender = sender;
         this.message = message;
-        this.timestamp = new Date();
     }
 }
 

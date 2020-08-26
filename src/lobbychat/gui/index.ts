@@ -63,8 +63,12 @@ let msgarea = document.getElementById('msgarea') as HTMLDivElement;
 
 function addMessage(msg: ChatMessage){
     let message = document.createElement('p') as HTMLParagraphElement;
+    const time = new Date();
     message.className = 'message';
-    message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}`;
+    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${`${((msg.timestamp.getHours() + 11) % 12) + 1}:${msg.timestamp.getMinutes() < 10 ? "0" + msg.timestamp.getMinutes().toString() : msg.timestamp.getMinutes()}:${msg.timestamp.getSeconds() < 10 ? "0" + msg.timestamp.getSeconds().toString() : msg.timestamp.getSeconds()} ${msg.timestamp.getHours() < 12 ? "AM" : "PM"}`}</span>`;
+    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${((msg.timestamp.getHours() + 11) % 12) + 1}:${msg.timestamp.getMinutes() < 10 ? "0" + msg.timestamp.getMinutes().toString() : msg.timestamp.getMinutes()}:${msg.timestamp.getSeconds() < 10 ? "0" + msg.timestamp.getSeconds().toString() : msg.timestamp.getSeconds()} ${msg.timestamp.getHours() < 12 ? "AM" : "PM"}</span>`;
+    message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${((time.getHours() + 11) % 12) + 1}:${time.getMinutes() < 10 ? "0" + time.getMinutes().toString() : time.getMinutes()}:${time.getSeconds() < 10 ? "0" + time.getSeconds().toString() : time.getSeconds()} ${time.getHours() < 12 ? "AM" : "PM"}</span>`;
+    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}`;
     // message.messageObject = msg;
     msgarea.append(message);
     message.scrollIntoView();
