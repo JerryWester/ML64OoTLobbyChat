@@ -122,6 +122,18 @@
                 border-width: 1px;
             }
 
+            img{
+                max-width: 100%;
+                height: auto;
+                filter: blur(20px);
+                transition-property: filter;
+                transition-duration: 0.5s;
+            }
+
+            img:hover{
+                filter: blur(0px);
+            }
+
             .announcement{
                 text-align: center;
                 margin-top: 10px;
