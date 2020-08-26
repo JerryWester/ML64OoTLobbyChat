@@ -144,18 +144,6 @@ export class ChatStorage{
         return ChatStorage.getPlayers(this);
     }
 
-    static getPlayerNames(object: ChatStorage){
-        let names: Array<string> = [];
-        object.getPlayers().forEach((player: INetworkPlayer) => {
-            names.push(player.nickname);
-        });
-        return names;
-    }
-
-    getPlayerNames(){
-        return ChatStorage.getPlayerNames(this);
-    }
-
     static sendMessage(object: ChatStorage, name: string, message: string){
         ChatStorage.addMessage(object, new ChatMessage(name, message));
     }
