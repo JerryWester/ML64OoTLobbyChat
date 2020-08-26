@@ -9,5 +9,9 @@
   "keywords": [],
   "core": "OcarinaofTime",
   "author": "JerryWester",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "showdown": "^1.9.1",
+    "string-strip-html": "^5.0.1"
+  }
 }

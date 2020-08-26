@@ -1,11 +1,21 @@
 import { MessageLayer } from 'modloader64_api/MessageLayer';
 import { TunnelMessageHandler } from 'modloader64_api/GUITunnel';
 import { ChatMessage, ChatStorage, LobbyChat_JoinEvent } from './chatclasses';
+import stripHtml from 'string-strip-html';
 
+const showdown = require('showdown');
+const converter = new showdown.Converter({
+    simplifiedAutoLink: true,
+    openLinksInNewWindow: true,
+    emoji: true,
+    underline: true,
+    literalMidWordAsterisks: true,
+    literalMidWordUnderscores: true,
+    excludeTrailingPunctuationFromURLs: true,
+    omitExtraWLInCodeBlocks: true
+});
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-
-const stripHtml = require('./string-strip-html.umd.js');
 
 const hooks = {};
 let player: string = "";
@@ -66,11 +76,7 @@ function addMessage(msg: ChatMessage){
     let message = document.createElement('p') as HTMLParagraphElement;
     const time = new Date();
     message.className = 'message';
-    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${`${((msg.timestamp.getHours() + 11) % 12) + 1}:${msg.timestamp.getMinutes() < 10 ? "0" + msg.timestamp.getMinutes().toString() : msg.timestamp.getMinutes()}:${msg.timestamp.getSeconds() < 10 ? "0" + msg.timestamp.getSeconds().toString() : msg.timestamp.getSeconds()} ${msg.timestamp.getHours() < 12 ? "AM" : "PM"}`}</span>`;
-    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${((msg.timestamp.getHours() + 11) % 12) + 1}:${msg.timestamp.getMinutes() < 10 ? "0" + msg.timestamp.getMinutes().toString() : msg.timestamp.getMinutes()}:${msg.timestamp.getSeconds() < 10 ? "0" + msg.timestamp.getSeconds().toString() : msg.timestamp.getSeconds()} ${msg.timestamp.getHours() < 12 ? "AM" : "PM"}</span>`;
     message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}<br><span class="timestamp">${((time.getHours() + 11) % 12) + 1}:${time.getMinutes() < 10 ? "0" + time.getMinutes().toString() : time.getMinutes()}:${time.getSeconds() < 10 ? "0" + time.getSeconds().toString() : time.getSeconds()} ${time.getHours() < 12 ? "AM" : "PM"}</span>`;
-    // message.innerHTML = `<b>${msg.sender}</b><br>${msg.message}`;
-    // message.messageObject = msg;
     msgarea.append(message);
     message.scrollIntoView();
 }
@@ -135,7 +141,10 @@ text.addEventListener('keydown', (evt) => {
     if(evt.key === 'Enter' && !evt.shiftKey){
         evt.preventDefault();
         if(text.value !== ''){
-            handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, stripHtml(text.value).result)});
+            handlers.tunnel.send("forwardToML", {
+                id: "lobbychat:SendMessage",
+                value: new ChatMessage(player, converter.makeHtml(stripHtml(text.value).result))
+            });
             text.value = '';
         }
     }
