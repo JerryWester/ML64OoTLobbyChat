@@ -17,6 +17,9 @@
                 --separator: #AAAAAA;
                 --scrollbar-bg: #EFEFEF;
                 --scrollbar: #B0B0B0;
+                --link-unvisited: #0000EE;
+                --link-clicked: #FF0000;
+                --link-visited: #800080;
             }
 
             :root[color-mode="dark"]{
@@ -27,6 +30,9 @@
                 --separator: #666666;
                 --scrollbar-bg: #1e1e1e;
                 --scrollbar: #444444;
+                --link-unvisited: #EE7700;
+                --link-clicked: #00FFFF;
+                --link-visited: #088088;
             }
 
             html{
@@ -134,6 +140,18 @@
                 filter: blur(0px);
             }
 
+            a:link{
+                color: var(--link-unvisited);
+            }
+
+            a:visited{
+                color: var(--link-visited);
+            }
+
+            a:active{
+                color: var(--link-clicked);
+            }
+
             .announcement{
                 text-align: center;
                 margin-top: 10px;
@@ -157,7 +175,12 @@
         </style>
     </head>
     <body>
-        <div id="msgarea"></div>
+        <div id="msgarea">
+            <p class="message">
+                <b>JerryWester</b><br>
+                <a href="https://www.google.com/">lol</a>
+            </p>
+        </div>
         <div id="header"><h2>JerryWesterTest</h2></div>
         <div id="footer">
             <input type="file" id="upload" accept="image/*">
