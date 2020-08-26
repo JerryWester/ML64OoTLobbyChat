@@ -82,7 +82,7 @@ let upload = document.getElementById('upload') as HTMLInputElement;
 
 function uploadImage(file: File){
     let src: string = URL.createObjectURL(file);
-    handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${src}" onload="URL.revokeObjectURL(${src})" max-width="100%"></img>`)});
+    handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${src}" onload="URL.revokeObjectURL(${src})"></img>`)});
 }
 
 upload.addEventListener('input', () => {
