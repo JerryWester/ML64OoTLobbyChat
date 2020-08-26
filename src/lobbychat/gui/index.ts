@@ -84,8 +84,15 @@ function announce(msg: string){
 let upload = document.getElementById('upload') as HTMLInputElement;
 
 function uploadImage(file: File){
-    let src: string = URL.createObjectURL(file);
-    handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${src}" onload="try {URL.revokeObjectURL(${src})} catch(e) {}" onerror="this.src='./404.png'"></img>`)});
+    let reader = new FileReader();
+    reader.onload = (evt) => {
+        if(evt.target !== null){
+            if(typeof evt.target.result === 'string'){
+                handlers.tunnel.send("forwardToML", {id: "lobbychat:SendMessage", value: new ChatMessage(player, `<img src="${evt.target.result}" onerror="this.src='./404.png'"></img>`)});
+            }
+        }
+    }
+    reader.readAsDataURL(file);
 }
 
 upload.addEventListener('input', () => {
