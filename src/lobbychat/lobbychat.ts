@@ -1,18 +1,14 @@
-import {IPlugin, IModLoaderAPI, ModLoaderEvents} from 'modloader64_api/IModLoaderAPI';
-import {IOOTCore} from 'modloader64_api/OOT/OOTAPI';
-import {InjectCore} from 'modloader64_api/CoreInjection';
-import { EventHandler, EventsServer, EventServerJoined, EventServerLeft, EventsClient } from 'modloader64_api/EventHandler';
+import { IPlugin, IModLoaderAPI } from 'modloader64_api/IModLoaderAPI';
+import { EventHandler, EventsClient } from 'modloader64_api/EventHandler';
+import { TunnelMessageHandler } from 'modloader64_api/GUITunnel';
+import { ChatStorage, LobbyChat_PingPacket, LobbyChat_HistoryPacket, LobbyChat_RmMessagePacket, LobbyChat_AddMessagePacket, LobbyChat_JoinEvent } from '@lobbychat/gui/chatclasses';
+import { LobbyData, NetworkHandler, INetworkPlayer } from 'modloader64_api/NetworkHandler';
 import path from 'path';
-import { TunnelMessageHandler, GUITunnelPacket } from 'modloader64_api/GUITunnel';
-import { ChatEvents, ChatMessage, ChatStorage, LobbyChat_PingPacket, LobbyChat_HistoryPacket, LobbyChat_AddPlayerPacket, LobbyChat_RmPlayerPacket, LobbyChat_RmMessagePacket, LobbyChat_AddMessagePacket, LobbyChat_JoinEvent } from '@lobbychat/gui/chatclasses';
-import { LobbyData, NetworkHandler, INetwork, INetworkPlayer } from 'modloader64_api/NetworkHandler';
 
 class lobbychat implements IPlugin{
 
     ModLoader!: IModLoaderAPI;
     pluginName?: string | undefined;
-    @InjectCore()
-    core!: IOOTCore;
     storage: ChatStorage = new ChatStorage();
 
     historyReady: boolean = false;
