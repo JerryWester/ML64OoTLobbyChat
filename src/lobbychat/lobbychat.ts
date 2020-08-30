@@ -96,10 +96,6 @@ class lobbychat implements IPlugin{
     @NetworkHandler('LobbyChat_StoragePacket')
     onReceiveStoragePacket(){
         this.ModLoader.logger.error("Somebody needs an update...");
-        this.historyReady = true;
-        if(this.GUIReady){
-            this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
-        }
     }
 
     @NetworkHandler('LobbyChat_AddMessagePacket')
