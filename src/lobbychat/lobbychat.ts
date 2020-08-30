@@ -24,9 +24,16 @@ class lobbychat implements IPlugin{
     }
     postinit(): void {
         this.ModLoader.gui.openWindow(400, 600, path.resolve(__dirname, 'gui', 'index.html'));
-        let players = this.storage.getPlayers();
-        if(players[players.length - 1] !== this.ModLoader.me){
-            this.ModLoader.clientSide.sendPacketToSpecificPlayer(new LobbyChat_PingPacket(this.storage.getLobby(), this.ModLoader.me), players[players.length - 1]);
+        if(this.storage.getPlayers().length !== 1){
+            this.ModLoader.clientSide.sendPacket(new LobbyChat_PingPacket(this.storage.getLobby(), this.ModLoader.me));
+            setTimeout(() => {
+                if(!this.historyReady){
+                    this.historyReady = true;
+                    if(this.GUIReady){
+                        this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
+                    }
+                }
+            }, 5000);
         }
     }
     onTick(frame?: number | undefined): void {
@@ -69,7 +76,7 @@ class lobbychat implements IPlugin{
     @NetworkHandler('LobbyChat_PingPacket')
     onReceivePingPacket(packet: LobbyChat_PingPacket){
         try {
-            this.ModLoader.clientSide.sendPacketToSpecificPlayer(new LobbyChat_HistoryPacket(packet.lobby, this.storage.getMessages()), packet.player)
+            this.ModLoader.clientSide.sendPacketToSpecificPlayer(new LobbyChat_HistoryPacket(packet.lobby, this.storage.getMessages()), packet.player);
         } catch(err) {
             this.ModLoader.logger.error(err);
         }
@@ -78,10 +85,12 @@ class lobbychat implements IPlugin{
     @NetworkHandler('LobbyChat_HistoryPacket')
     onReceiveHistoryPacket(packet: LobbyChat_HistoryPacket){
         try {
-            this.storage.setMessages(packet.history);
-            this.historyReady = true;
-            if(this.GUIReady){
-                this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
+            if(!this.historyReady){
+                this.historyReady = true;
+                this.storage.setMessages(packet.history);
+                if(this.GUIReady){
+                    this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
+                }
             }
         } catch(err) {
             this.ModLoader.logger.error(err);
@@ -92,6 +101,9 @@ class lobbychat implements IPlugin{
     onReceiveStoragePacket(){
         this.ModLoader.logger.error("Somebody needs an update...");
         this.historyReady = true;
+        if(this.GUIReady){
+            this.ModLoader.gui.tunnel.send('lobbychat:JoinUpdate', new LobbyChat_JoinEvent(this.ModLoader.me, this.storage.getLobby(), this.storage.getPlayers(), this.storage.getMessages()));
+        }
     }
 
     @NetworkHandler('LobbyChat_AddMessagePacket')
