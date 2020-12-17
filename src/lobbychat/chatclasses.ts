@@ -13,8 +13,8 @@ export class LobbyChat_JoinEvent{
     player: INetworkPlayer;
     lobby: string;
     players: Array<INetworkPlayer>;
-    history: Array<ChatMessage>;
-    constructor(player: INetworkPlayer, lobby: string, players: Array<INetworkPlayer>, history: Array<ChatMessage>){
+    history: Array<IChatMessage>;
+    constructor(player: INetworkPlayer, lobby: string, players: Array<INetworkPlayer>, history: Array<IChatMessage>){
         this.player = player;
         this.lobby = lobby;
         this.players = players;
@@ -30,8 +30,8 @@ export class LobbyChat_PingPacket extends Packet{
 }
 
 export class LobbyChat_HistoryPacket extends Packet{
-    history: Array<ChatMessage>;
-    constructor(lobby: string, history: Array<ChatMessage>) {
+    history: Array<IChatMessage>;
+    constructor(lobby: string, history: Array<IChatMessage>) {
         super('LobbyChat_HistoryPacket', 'LobbyChat', lobby, false);
         this.history = history;
     }
@@ -52,18 +52,18 @@ export class LobbyChat_RmPlayerPacket extends Packet{
 }
 
 export class LobbyChat_AddMessagePacket extends Packet{
-    message: ChatMessage;
+    message: IChatMessage;
 
-    constructor(lobby: string, message: ChatMessage) {
+    constructor(lobby: string, message: IChatMessage) {
         super('LobbyChat_AddMessagePacket', 'LobbyChat', lobby, true);
         this.message = message;
     }
 }
 
 export class LobbyChat_RmMessagePacket extends Packet{
-    message: ChatMessage;
+    message: IChatMessage;
 
-    constructor(lobby: string, message: ChatMessage) {
+    constructor(lobby: string, message: IChatMessage) {
         super('LobbyChat_RmMessagePacket', 'LobbyChat', lobby, true);
         this.message = message;
     }
@@ -77,7 +77,12 @@ export class LobbyChat_RmMessagePacket extends Packet{
 //     }
 // }
 
-export class ChatMessage{
+export interface IChatMessage {
+    sender: string;
+    message: string;
+}
+
+export class ChatMessage implements IChatMessage {
     sender: string;
     message: string;
     constructor(sender: string, message: string){
@@ -86,10 +91,26 @@ export class ChatMessage{
     }
 }
 
-export class ChatStorage{
+export interface IChatStorage {
     lobby: string;
     players: Array<INetworkPlayer>;
-    history: Array<ChatMessage>;
+    history: Array<IChatMessage>;
+    getLobby(): string;
+    setLobby(lobby: string): void;
+    addPlayer(player: INetworkPlayer): void;
+    removePlayer(player: INetworkPlayer): void;
+    getPlayers(): Array<INetworkPlayer>;
+    sendMessage(name: string, message: string): void;
+    addMessage(message: IChatMessage): void;
+    removeMessage(message: IChatMessage): void;
+    getMessages(): Array<IChatMessage>;
+    setMessages(history: Array<IChatMessage>): void;
+}
+
+export class ChatStorage implements IChatStorage{
+    lobby: string;
+    players: Array<INetworkPlayer>;
+    history: Array<IChatMessage>;
     constructor(lobby?: string){
         this.lobby = typeof lobby === 'string' ? lobby : '';
         this.players = [];
@@ -152,18 +173,18 @@ export class ChatStorage{
         ChatStorage.sendMessage(this, name, message);
     }
 
-    static addMessage(object: ChatStorage, message: ChatMessage){
+    static addMessage(object: ChatStorage, message: IChatMessage){
         object.history.push(message);
         bus.emit(ChatEvents.ADD_MSG, message);
         NetworkBus.emit(ChatEvents.ADD_MSG, message);
     }
 
-    addMessage(message: ChatMessage){
+    addMessage(message: IChatMessage){
         ChatStorage.addMessage(this, message);
     }
 
-    static removeMessage(object: ChatStorage, message: ChatMessage){
-        let rmdMsg: ChatMessage;
+    static removeMessage(object: ChatStorage, message: IChatMessage){
+        let rmdMsg: IChatMessage;
         try {
             rmdMsg = object.history.splice(object.history.indexOf(message))[0];
             bus.emit(ChatEvents.RM_MSG, rmdMsg);
@@ -173,7 +194,7 @@ export class ChatStorage{
         }
     }
 
-    removeMessage(message: ChatMessage){
+    removeMessage(message: IChatMessage){
         ChatStorage.removeMessage(this, message);
     }
 
@@ -185,11 +206,11 @@ export class ChatStorage{
         return ChatStorage.getMessages(this);
     }
 
-    static setMessages(object: ChatStorage, history: Array<ChatMessage>){
-        object.history = JSON.parse(JSON.stringify(history)) as Array<ChatMessage>;
+    static setMessages(object: ChatStorage, history: Array<IChatMessage>){
+        object.history = JSON.parse(JSON.stringify(history)) as Array<IChatMessage>;
     }
 
-    setMessages(history: Array<ChatMessage>){
+    setMessages(history: Array<IChatMessage>){
         ChatStorage.setMessages(this, history);
     }
 }
