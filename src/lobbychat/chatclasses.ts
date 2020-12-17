@@ -117,15 +117,15 @@ export class ChatStorage implements IChatStorage{
         this.history = [];
     }
 
-    static getLobby(object: ChatStorage){
+    static getLobby(object: IChatStorage){
         return object.lobby;
     }
 
-    getLobby(){
+    getLobby(): string{
         return ChatStorage.getLobby(this);
     }
 
-    static setLobby(object: ChatStorage, lobby: string){
+    static setLobby(object: IChatStorage, lobby: string){
         object.lobby = lobby;
     }
 
@@ -133,7 +133,7 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.setLobby(this, lobby);
     }
 
-    static addPlayer(object: ChatStorage, player: INetworkPlayer){
+    static addPlayer(object: IChatStorage, player: INetworkPlayer){
         object.players.push(player);
         bus.emit(ChatEvents.ADD_PLAYER, player);
         NetworkBus.emit(ChatEvents.ADD_PLAYER, player);
@@ -143,7 +143,7 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.addPlayer(this, player);
     }
 
-    static removePlayer(object: ChatStorage, player: INetworkPlayer){
+    static removePlayer(object: IChatStorage, player: INetworkPlayer){
         try {
             object.players.splice(object.players.indexOf(player));
             bus.emit(ChatEvents.RM_PLAYER, player);
@@ -157,15 +157,15 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.removePlayer(this, player);
     }
 
-    static getPlayers(object: ChatStorage){
+    static getPlayers(object: IChatStorage){
         return object.players;
     }
 
-    getPlayers(){
+    getPlayers(): Array<INetworkPlayer>{
         return ChatStorage.getPlayers(this);
     }
 
-    static sendMessage(object: ChatStorage, name: string, message: string){
+    static sendMessage(object: IChatStorage, name: string, message: string){
         ChatStorage.addMessage(object, new ChatMessage(name, message));
     }
 
@@ -173,7 +173,7 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.sendMessage(this, name, message);
     }
 
-    static addMessage(object: ChatStorage, message: IChatMessage){
+    static addMessage(object: IChatStorage, message: IChatMessage){
         object.history.push(message);
         bus.emit(ChatEvents.ADD_MSG, message);
         NetworkBus.emit(ChatEvents.ADD_MSG, message);
@@ -183,7 +183,7 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.addMessage(this, message);
     }
 
-    static removeMessage(object: ChatStorage, message: IChatMessage){
+    static removeMessage(object: IChatStorage, message: IChatMessage){
         let rmdMsg: IChatMessage;
         try {
             rmdMsg = object.history.splice(object.history.indexOf(message))[0];
@@ -198,15 +198,15 @@ export class ChatStorage implements IChatStorage{
         ChatStorage.removeMessage(this, message);
     }
 
-    static getMessages(object: ChatStorage){
+    static getMessages(object: IChatStorage){
         return object.history;
     }
 
-    getMessages(){
+    getMessages(): Array<IChatMessage>{
         return ChatStorage.getMessages(this);
     }
 
-    static setMessages(object: ChatStorage, history: Array<IChatMessage>){
+    static setMessages(object: IChatStorage, history: Array<IChatMessage>){
         object.history = JSON.parse(JSON.stringify(history)) as Array<IChatMessage>;
     }
 

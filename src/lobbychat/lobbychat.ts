@@ -1,7 +1,7 @@
 import { IPlugin, IModLoaderAPI } from 'modloader64_api/IModLoaderAPI';
 import { EventHandler, EventsClient } from 'modloader64_api/EventHandler';
 import { TunnelMessageHandler } from 'modloader64_api/GUITunnel';
-import { ChatStorage, LobbyChat_PingPacket, LobbyChat_HistoryPacket, LobbyChat_RmMessagePacket, LobbyChat_AddMessagePacket, LobbyChat_JoinEvent } from './chatclasses';
+import { ChatStorage, LobbyChat_PingPacket, LobbyChat_HistoryPacket, LobbyChat_RmMessagePacket, LobbyChat_AddMessagePacket, LobbyChat_JoinEvent, IChatStorage } from './chatclasses';
 import { LobbyData, NetworkHandler, INetworkPlayer } from 'modloader64_api/NetworkHandler';
 import path from 'path';
 import { onViUpdate } from 'modloader64_api/PluginLifecycle';
@@ -11,7 +11,7 @@ class lobbychat implements IPlugin{
 
     ModLoader!: IModLoaderAPI;
     pluginName?: string | undefined;
-    storage: ChatStorage = new ChatStorage();
+    storage: IChatStorage = new ChatStorage();
 
     historyReady: boolean = false;
     GUIReady: boolean = false;
